@@ -1,0 +1,66 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam dpi 150
+skinparam classAttributeIconSize 0
+skinparam roundCorner 8
+skinparam class {
+  BackgroundColor #FDFDFD
+  BorderColor #3B5B92
+  ArrowColor #3B5B92
+}
+skinparam interface {
+  BackgroundColor #EAF1FB
+  BorderColor #3B5B92
+}
+title InventarioCaja<T extends Comparable<T>> - Diagrama de clases
+
+interface Comparable<T> {
+  + compareTo(otro : T) : int
+}
+
+class Producto implements Comparable {
+  - nombre : String
+  - precio : double
+  + Producto(nombre : String, precio : double)
+  + getNombre() : String
+  + getPrecio() : double
+  + compareTo(otro : Producto) : int
+}
+
+class "InventarioCaja<T extends Comparable<T>>" as InventarioCaja {
+  - elementos : ArrayList<T>
+  + InventarioCaja()
+  + agregar(elemento : T) : void
+  + filtrarMayoresQue(umbral : T) : ArrayList<T>
+}
+
+class Cliente {
+  - nombre : String
+  - documento : String
+  + Cliente(nombre : String, documento : String)
+  + getNombre() : String
+}
+
+class Factura {
+  - cliente : Cliente
+  - productos : ArrayList<Producto>
+  + Factura(cliente : Cliente, productos : ArrayList<Producto>)
+  + calcularTotal() : double
+}
+
+class Caja {
+  - inventario : InventarioCaja<Producto>
+  + Caja()
+  + agregarAlInventario(producto : Producto) : void
+  + facturar(cliente : Cliente, compras : ArrayList<Producto>) : Factura
+  + consultarMasCarosQue(umbral : Producto) : ArrayList<Producto>
+}
+
+Caja *-- "1" InventarioCaja : inventario\n<<T = Producto>>
+Caja ..> Cliente : atiende
+Caja ..> Factura : crea
+Factura o-- "1" Cliente
+Factura o-- "0..*" Producto
+InventarioCaja o-- "0..*" Producto : contiene
+@enduml
